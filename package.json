@@ -1,0 +1,22 @@
+{
+  "name": "relax_api",
+  "version": "1.0.0",
+  "description": "This application implements a workaround to return only the data (json) from a RelaX query API request",
+  "main": "index.js",
+  "scripts": {
+    "serve": "node server/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "RelaX",
+    "Relational Algebra",
+    "Database systems"
+  ],
+  "author": "Rodrigo Laiola Guimaraes <rodrigo@laiola.com.br>",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "express": "^4.17.1",
+    "puppeteer": "^10.1.0",
+    "winston": "^3.3.3"
+  }
+}
