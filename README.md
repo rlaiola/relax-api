@@ -39,7 +39,7 @@ This implementation provides a workaround to facilitate the integration of [Rela
 * Open a Web browser window and visit the URL http://localhost. Voilà! RelaX Web application should work properly.
 
     <p align="center">
-        <img src="imgs/relax_web_app.png" width=400 />
+        <img src="imgs/relax_web_app.png" width=800 />
     </p>
 
 * Run the following command to test RelaX Query API. You should get the query result encoded in JSON format.
@@ -47,7 +47,7 @@ This implementation provides a workaround to facilitate the integration of [Rela
         curl http://127.0.0.1:3000/relax/api/local/uibk/local/0?query=UiBqb2luIFMgam9pbiBU
 
     <p align="center">
-        <img src="imgs/relax_api.png" width=400 />
+        <img src="imgs/relax_api.png" width=800 />
     </p>
 
 ## Increasing GitHub rate limit for API requests using Basic Authentication
