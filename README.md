@@ -3,27 +3,31 @@ A REST API to integrate RelaX with third-party applications.
 
 This implementation provides a workaround to facilitate the integration of [RelaX - relational algebra calculator](https://dbis-uibk.github.io/relax/) with third-party applications/systems. **Why is it necessary? Because RelaX Query API does not work as an actual REST API!** RelaX is implemented in React JS, a UI framework, to load data asynchronously on a single page application. This approach returns a Web page that does not include the data. More information regarding this issue can be found [here](https://github.com/dbis-uibk/relax/pull/148).
 
-## HOW TO BUILD IT:
+## HOW TO BUILD AND RUN IT:
 
 * Install Git (https://github.com/git-guides/install-git).
 * Install Yarn (https://yarnpkg.com/).
 * Install Node@12 (https://nodejs.org/en/).
 * Clone this repo and set it as your working directory.
 
-        git clone https://github.com/rlaiola/relax-api.git
-        cd relax-api
+```bash
+git clone https://github.com/rlaiola/relax-api.git
+cd relax-api
+```
 
 * Clone RelaX repo* and checkout the static files (branch `gh-pages`).
 
-        mkdir dist && \
-        cd dist && \
-        git clone https://github.com/rlaiola/relax.git && \
-        cd relax && \
-        git branch -a && \
-        git checkout origin/gh-pages && \
-        git checkout gh-pages && \
-        git branch && \
-        cd ../..
+```bash
+mkdir dist && \
+cd dist && \
+git clone https://github.com/rlaiola/relax.git && \
+cd relax && \
+git branch -a && \
+git checkout origin/gh-pages && \
+git checkout gh-pages && \
+git branch && \
+cd ../..
+```
  
 **NOTE:** As of Jul 17th 2021, RelaX main repo had not yet accepted the changes necessary for this REST API to work. That's the reason why you should clone the forked project.
 
@@ -32,23 +36,29 @@ This implementation provides a workaround to facilitate the integration of [Rela
 
 **NOTE:** This implementation uses ports 8080 (RelaX Web app) and 3000 (RelaX Query API). These ports can me changed by setting the variables RELAX_PORT and RELAX_API_PORT, respectively, as shown below:
 
-        RELAX_PORT=80 RELAX_API_PORT=4000 yarn serve
+```bash
+RELAX_PORT=80 RELAX_API_PORT=4000 yarn serve
+```
 
 ## HOW TO TEST IT:
 
-* Open a Web browser window and visit the URL http://localhost. Voilà! RelaX Web application should work properly.
+* Make sure you followed the steps above to [build and run](#how-to-build-and-run-it) the application;
 
-    <p align="center">
-        <img src="imgs/relax_web_app.png" width=800 />
-    </p>
+* Open a Web browser window and visit the URL http://localhost:8080. In case you started the application to listen in a different port number (`RELAX_PORT` variable), change the URL accordingly. Voilà! RelaX Web application should work properly.
 
-* Run the following command to test RelaX Query API. You should get the query result encoded in JSON format.
+<p align="center">
+<img src="imgs/relax_web_app.png" width=800 />
+</p>
 
-        curl http://127.0.0.1:3000/relax/api/local/uibk/local/0?query=UiBqb2luIFMgam9pbiBU
+* Run the following command to test RelaX Query API. In case you started the application to listen in a different port number (`RELAX_API_PORT` variable), change the URL accordingly. You should get the query result encoded in JSON format.
 
-    <p align="center">
-        <img src="imgs/relax_api.png" width=800 />
-    </p>
+```bash
+curl http://127.0.0.1:3000/relax/api/local/uibk/local/0?query=UiBqb2luIFMgam9pbiBU
+```
+
+<p align="center">
+<img src="imgs/relax_api.png" width=800 />
+</p>
 
 ## Increasing GitHub rate limit for API requests using Basic Authentication
 
@@ -58,11 +68,15 @@ RelaX Web application and API may need to make calls to GitHub API (i.e., to dow
 
 1. Then, start the application setting the GITHUB_ACCESS_TOKEN environment variable (replace the word 'my_token' with the actual personal access token generated in the previous step).
 
-        GITHUB_ACCESS_TOKEN=my_token yarn serve
+```bash
+GITHUB_ACCESS_TOKEN=my_token yarn serve
+```
     
 **NOTE:** You can check the current and remaining limits using the following command (replace the word 'my_token' with the actual personal access token created before). For details check the [documentation](https://docs.github.com/en/rest/guides/getting-started-with-the-rest-api).
-    
-        curl -H "Authorization: token my_token" -I https://api.github.com/users/octocat/orgs
+
+```bash
+curl -H "Authorization: token my_token" -I https://api.github.com/users/octocat/orgs
+```
 
 ## LICENSE:
 
