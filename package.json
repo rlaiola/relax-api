@@ -12,11 +12,11 @@
     "Relational Algebra",
     "Database systems"
   ],
-  "author": "Rodrigo Laiola Guimaraes <rodrigo@laiola.com.br>",
+  "author": "Rodrigo Laiola Guimaraes",
   "license": "GPL-3.0",
   "dependencies": {
     "express": "^4.17.1",
-    "puppeteer": "^10.1.0",
+    "puppeteer": "^13.7.0",
     "winston": "^3.3.3"
   }
 }
