@@ -8,10 +8,8 @@ name: Lint code base
 on:
   # Run on pushes
   push:
-    branches-ignore: ["main"]
   # on pulls
   pull_request:
-    # The branches below must be a subset of the branches above
     branches: ["main"]
   # or on button click
   workflow_dispatch:
