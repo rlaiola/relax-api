@@ -20,7 +20,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  security-analysis:
+  analyze:
     permissions:
       actions: read
       contents: read
