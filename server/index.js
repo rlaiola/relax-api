@@ -33,6 +33,10 @@ const path = require('path')
 const puppeteer = require('puppeteer')
 // const logger = require('./logger')
 
+// Remove the X-Powered-By header
+apiApp.disable('x-powered-by')
+relaxApp.disable('x-powered-by')
+
 let jsonResponse = {}
 
 // Creating a limiter by calling rateLimit function with options:
