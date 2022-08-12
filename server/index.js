@@ -39,15 +39,22 @@ let jsonResponse = {}
 // max contains the maximum number of request and windowMs
 // contains the time in millisecond so only max amount of
 // request can be made in windowMS time.
-const limiter = rateLimit({
-  max: 20,
+const limiterRelax = rateLimit({
+  max: 50,
+  windowMs: 1 * 60 * 1000, // 1 minute
+  message: 'Too many request from this IP'
+})
+
+const limiterAPI = rateLimit({
+  max: 100,
   windowMs: 1 * 60 * 1000, // 1 minute
   message: 'Too many request from this IP'
 })
 
 relaxApp.use(express.static(path.join(__dirname, '../dist')))
+apiApp.use(limiterRelax)
 apiApp.use(bodyParser.json())
-apiApp.use(limiter)
+apiApp.use(limiterAPI)
 
 async function processAPIRequest (source, id, filename, index, query) {
   // console.log("loadResults")
