@@ -1,0 +1,50 @@
+# This workflow may use actions that are not certified by GitHub.
+# They may be provided by a third-party and be governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Lint code base
+
+on:
+  # Run on pushes
+  push:
+    branches-ignore: ["main"]
+  # on pulls
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: ["main"]
+  # or on button click
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # Checkout a repository under $GITHUB_WORKSPACE, so the workflow can access it.
+      # https://github.com/marketplace/actions/checkout
+      - 
+        name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          # Repository name with owner. For example, actions/checkout.
+          # Default: ${{ github.repository }}
+          repository: '${{ github.repository }}'
+          # The branch, tag or SHA to checkout. When checking out the repository that
+          # triggered a workflow, this defaults to the reference or SHA for that event.
+          # Otherwise, uses the default branch.
+          ref: 'main'
+          # Full git history is needed to get a proper list of changed files within `super-linter`
+          fetch-depth: 0
+
+      # Run a Super-Linter against code base
+      # https://github.com/marketplace/actions/super-linter
+      - 
+        name: Lint Code Base
+        uses: github/super-linter@v4
+        env:
+          VALIDATE_ALL_CODEBASE: false
+          # Change to 'master' if your main branch differs
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
