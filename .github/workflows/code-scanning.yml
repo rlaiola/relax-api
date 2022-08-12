@@ -8,14 +8,9 @@ name: Code scanning
 on:
   # Run on pushes
   push:
-    branches: [ "main" ]
   # on pulls
   pull_request:
-    # The branches below must be a subset of the branches above
     branches: [ "main" ]
-  # daily at 8:15 AM UTC
-  schedule:
-    - cron: '15 8 * * *'
   # or on button click
   workflow_dispatch:
 
