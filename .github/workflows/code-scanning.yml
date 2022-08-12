@@ -8,7 +8,7 @@ name: Code scanning
 on:
   # Run on pushes
   push:
-  # on pulls
+  # on PRs
   pull_request:
     branches: [ "main" ]
   # or on button click
