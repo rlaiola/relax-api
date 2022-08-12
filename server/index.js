@@ -26,6 +26,8 @@
 const express = require('express');
 const api_app = express();
 const relax_app = express();
+// For limiting number of incoming requests
+const rateLimit = require("express-rate-limit");
 const bodyParser = require('body-parser');
 const path = require('path');
 const puppeteer = require('puppeteer');
@@ -33,8 +35,19 @@ const puppeteer = require('puppeteer');
 
 let jsonResponse = {}
 
+// Creating a limiter by calling rateLimit function with options:
+// max contains the maximum number of request and windowMs 
+// contains the time in millisecond so only max amount of 
+// request can be made in windowMS time.
+const limiter = rateLimit({
+  max: 10,
+  windowMs: 1 * 60 * 1000,  // 1 minute
+  message: "Too many request from this IP"
+});
+
 relax_app.use(express.static(path.join(__dirname, '../dist')));
 api_app.use(bodyParser.json());
+api_app.use(limiter);
 
 async function processAPIRequest(source, id, filename, index, query) {
   //console.log("loadResults");
