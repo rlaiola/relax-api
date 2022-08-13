@@ -8,6 +8,8 @@ name: Lint code base
 on:
   # Run on pushes
   push:
+     # Remove the line to run when pushing to main
+     branches-ignore: ["main"]
   # on PRs
   pull_request:
     branches: ["main"]
