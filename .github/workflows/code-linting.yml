@@ -42,7 +42,7 @@ jobs:
       # https://github.com/marketplace/actions/super-linter
       - 
         name: Lint repo code
-        uses: github/super-linter@v4
+        uses: github/super-linter@v5
         env:
           VALIDATE_ALL_CODEBASE: false
           VALIDATE_JAVASCRIPT_ES: true
