@@ -67,7 +67,10 @@ async function processAPIRequest (source, id, filename, index, query) {
   const browser = await puppeteer.launch({
     // Running Puppeteer on a Docker container requires some additional dependencies
     // https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-in-docker
-    args: ['--no-sandbox']
+    args: [
+      '--no-sandbox',
+      '--disk-cache-size=0'
+    ]
   })
 
   try {
