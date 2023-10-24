@@ -1,7 +1,7 @@
 {
-  "name": "relax_api",
+  "name": "relax-api",
   "version": "1.0.0",
-  "description": "This application implements a workaround to return only the data (json) from a RelaX query API request",
+  "description": "A REST API to integrate RelaX with third-party applications",
   "main": "index.js",
   "scripts": {
     "serve": "node server/index.js",
