@@ -91,7 +91,10 @@ async function processAPIRequest (source, id, filename, index, query) {
   // console.log('http://127.0.0.1:' + relaxPort + '/relax/api/' + urlPath)
   // logger.info(urlPath)
   // logger.info('http://127.0.0.1:' + relaxPort + '/relax/api/' + urlPath)
-  await page.goto('http://127.0.0.1:' + relaxPort + '/relax/api/' + urlPath, { timeout: 60000 })
+  await page.goto('http://127.0.0.1:' + relaxPort + '/relax/api/' + urlPath, {
+    // 5 min
+    timeout: 300000
+  })
 
   let json = await page.evaluate(() => {
     const value1 = document.getElementById('success').firstChild.nodeValue
