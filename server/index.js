@@ -129,8 +129,13 @@ apiApp.get('/relax/api/:source/:id/:filename/:index', async function (req, res) 
   const { source, id, filename, index } = req.params
   const query = req.query.query
 
-  const jsonResponse = await processAPIRequest(source, id, filename, index, query)
-  res.json(jsonResponse)
+  try {
+    const jsonResponse = await processAPIRequest(source, id, filename, index, query)
+    res.json(jsonResponse)
+  } catch (error) {
+    res.status(error.response.status)
+    return res.send(error.message);
+  }
 })
 
 // Handling URL path with source and id only
@@ -146,8 +151,13 @@ apiApp.get('/relax/api/:source/:id', async function (req, res) {
   const { source, id } = req.params
   const query = req.query.query
 
-  const jsonResponse = await processAPIRequest(source, id, undefined, undefined, query)
-  res.json(jsonResponse)
+  try {
+    const jsonResponse = await processAPIRequest(source, id, undefined, undefined, query)
+    res.json(jsonResponse)
+  } catch (error) {
+    res.status(error.response.status)
+    return res.send(error.message);
+  }
 })
 
 // Handling all other URLs by returning an empty json
