@@ -44,13 +44,13 @@ relaxApp.disable('x-powered-by')
 const limiterRelax = rateLimit({
   max: 50,
   windowMs: 1 * 60 * 1000, // 1 minute
-  message: 'Too many request from this IP'
+  message: 'Too many requests from this IP'
 })
 
 const limiterAPI = rateLimit({
   max: 100,
   windowMs: 1 * 60 * 1000, // 1 minute
-  message: 'Too many request from this IP'
+  message: 'Too many requests from this IP'
 })
 
 relaxApp.use(express.static(path.join(__dirname, '../dist')))
@@ -93,7 +93,7 @@ async function processAPIRequest (source, id, filename, index, query) {
   // logger.info('http://127.0.0.1:' + relaxPort + '/relax/api/' + urlPath)
   await page.goto('http://127.0.0.1:' + relaxPort + '/relax/api/' + urlPath, {
     // 1 min
-    timeout: 60000
+    // timeout: 60000
   })
 
   let json = await page.evaluate(() => {
@@ -132,9 +132,11 @@ apiApp.get('/relax/api/:source/:id/:filename/:index', async function (req, res) 
   try {
     const jsonResponse = await processAPIRequest(source, id, filename, index, query)
     res.json(jsonResponse)
-  } catch (error) {
-    res.status(error.response.status)
-    return res.send(error.message);
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      result: err.stack
+    })
   }
 })
 
@@ -154,9 +156,11 @@ apiApp.get('/relax/api/:source/:id', async function (req, res) {
   try {
     const jsonResponse = await processAPIRequest(source, id, undefined, undefined, query)
     res.json(jsonResponse)
-  } catch (error) {
-    res.status(error.response.status)
-    return res.send(error.message);
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      result: err.stack
+    })
   }
 })
 
