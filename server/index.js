@@ -61,56 +61,66 @@ apiApp.use(limiterAPI)
 async function processAPIRequest (source, id, filename, index, query) {
   // console.log("loadResults")
   // logger.info("loadResults")
+  let json = {}
 
   const browser = await puppeteer.launch({
     // Running Puppeteer on a Docker container requires some additional dependencies
     // https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-in-docker
     args: [
       '--no-sandbox'
-    ]
+    ],
   })
 
-  const page = await browser.newPage()
+  try {
+    const page = await browser.newPage()
 
-  // Increases GitHub rate limit for API requests using Basic Authentication
-  // https://docs.github.com/en/rest/overview/resources-in-the-rest-api
-  // https://docs.github.com/en/rest/guides/getting-started-with-the-rest-api
-  if (process.env.GITHUB_ACCESS_TOKEN) {
-    await page.setExtraHTTPHeaders({
-      Authorization: 'token ' + process.env.GITHUB_ACCESS_TOKEN
-    })
-  }
-
-  let urlPath = ''
-  if (filename !== undefined && index !== undefined) {
-    urlPath = source + '/' + id + '/' + filename + '/' + index
-  } else urlPath = source + '/' + id
-
-  urlPath = urlPath + '?query=' + query
-  // console.log(urlPath)
-  // console.log('http://127.0.0.1:' + relaxPort + '/relax/api/' + urlPath)
-  // logger.info(urlPath)
-  // logger.info('http://127.0.0.1:' + relaxPort + '/relax/api/' + urlPath)
-  await page.goto('http://127.0.0.1:' + relaxPort + '/relax/api/' + urlPath, {
-    // 1 min
-    // timeout: 60000
-  })
-
-  let json = await page.evaluate(() => {
-    const value1 = document.getElementById('success').firstChild.nodeValue
-    const value2 = document.getElementById('query').firstChild.nodeValue
-    const value3 = document.getElementById('result').firstChild.nodeValue
-
-    return {
-      success: value1,
-      query: value2,
-      result: value3
+    // Increases GitHub rate limit for API requests using Basic Authentication
+    // https://docs.github.com/en/rest/overview/resources-in-the-rest-api
+    // https://docs.github.com/en/rest/guides/getting-started-with-the-rest-api
+    if (process.env.GITHUB_ACCESS_TOKEN) {
+      await page.setExtraHTTPHeaders({
+        Authorization: 'token ' + process.env.GITHUB_ACCESS_TOKEN
+      })
     }
-  })
 
-  // Close it
-  await page.close()
-  await browser.close()
+    let urlPath = ''
+    if (filename !== undefined && index !== undefined) {
+      urlPath = source + '/' + id + '/' + filename + '/' + index
+    } else urlPath = source + '/' + id
+
+    urlPath = urlPath + '?query=' + query
+    // console.log(urlPath)
+    // console.log('http://127.0.0.1:' + relaxPort + '/relax/api/' + urlPath)
+    // logger.info(urlPath)
+    // logger.info('http://127.0.0.1:' + relaxPort + '/relax/api/' + urlPath)
+    await page.goto('http://127.0.0.1:' + relaxPort + '/relax/api/' + urlPath, {
+      // Wait as much as necessary
+      timeout: 0
+    })
+
+    json = await page.evaluate(() => {
+      const value1 = document.getElementById('success').firstChild.nodeValue
+      const value2 = document.getElementById('query').firstChild.nodeValue
+      const value3 = document.getElementById('result').firstChild.nodeValue
+
+      return {
+        success: value1,
+        query: value2,
+        result: value3
+      }
+    })
+
+    // Close it
+    await page.close()
+  } catch (err) {
+    console.log(err);
+    json = {
+      success: false,
+      error: err.stack
+    }
+  } finally {
+    await browser.close();
+  }
 
   console.log(json)
   return json
@@ -129,15 +139,8 @@ apiApp.get('/relax/api/:source/:id/:filename/:index', async function (req, res) 
   const { source, id, filename, index } = req.params
   const query = req.query.query
 
-  try {
-    const jsonResponse = await processAPIRequest(source, id, filename, index, query)
-    res.json(jsonResponse)
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      result: err.stack
-    })
-  }
+  const jsonResponse = await processAPIRequest(source, id, filename, index, query)
+  res.json(jsonResponse)
 })
 
 // Handling URL path with source and id only
@@ -153,15 +156,8 @@ apiApp.get('/relax/api/:source/:id', async function (req, res) {
   const { source, id } = req.params
   const query = req.query.query
 
-  try {
-    const jsonResponse = await processAPIRequest(source, id, undefined, undefined, query)
-    res.json(jsonResponse)
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      result: err.stack
-    })
-  }
+  const jsonResponse = await processAPIRequest(source, id, undefined, undefined, query)
+  res.json(jsonResponse)
 })
 
 // Handling all other URLs by returning an empty json
