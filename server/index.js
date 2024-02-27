@@ -26,8 +26,8 @@
 const express = require('express')
 const apiApp = express()
 const relaxApp = express()
-// For limiting number of incoming requests
-const rateLimit = require('express-rate-limit')
+// // For limiting number of incoming requests
+// const rateLimit = require('express-rate-limit')
 const bodyParser = require('body-parser')
 const path = require('path')
 const puppeteer = require('puppeteer')
@@ -37,26 +37,26 @@ const puppeteer = require('puppeteer')
 apiApp.disable('x-powered-by')
 relaxApp.disable('x-powered-by')
 
-// Creating a limiter by calling rateLimit function with options:
-// max contains the maximum number of request and windowMs
-// contains the time in millisecond so only max amount of
-// request can be made in windowMS time.
-const limiterRelax = rateLimit({
-  max: 50,
-  windowMs: 1 * 60 * 1000, // 1 minute
-  message: 'Too many requests from this IP'
-})
+// // Creating a limiter by calling rateLimit function with options:
+// // max contains the maximum number of request and windowMs
+// // contains the time in millisecond so only max amount of
+// // request can be made in windowMS time.
+// const limiterRelax = rateLimit({
+//   max: 50,
+//   windowMs: 1 * 60 * 1000, // 1 minute
+//   message: 'Too many requests from this IP'
+// })
 
-const limiterAPI = rateLimit({
-  max: 100,
-  windowMs: 1 * 60 * 1000, // 1 minute
-  message: 'Too many requests from this IP'
-})
+// const limiterAPI = rateLimit({
+//   max: 100,
+//   windowMs: 1 * 60 * 1000, // 1 minute
+//   message: 'Too many requests from this IP'
+// })
 
 relaxApp.use(express.static(path.join(__dirname, '../dist')))
-apiApp.use(limiterRelax)
+// apiApp.use(limiterRelax)
 apiApp.use(bodyParser.json())
-apiApp.use(limiterAPI)
+// apiApp.use(limiterAPI)
 
 async function processAPIRequest (source, id, filename, index, query) {
   // console.log("loadResults")
