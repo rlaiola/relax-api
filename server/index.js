@@ -67,8 +67,9 @@ async function processAPIRequest (source, id, filename, index, query) {
     // Running Puppeteer on a Docker container requires some additional dependencies
     // https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-in-docker
     args: [
-      '--no-sandbox'
+      '--no-sandbox',
     ],
+    headless: 'new'
   })
 
   try {
