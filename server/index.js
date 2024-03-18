@@ -143,6 +143,7 @@ apiApp.get('/relax/api/:source/:id/:filename/:index', async function (req, res) 
   const jsonResponse = await processAPIRequest(source, id, filename, index, query)
   if (jsonResponse.success === false && jsonResponse.error) {
     res.status(500).json(jsonResponse)
+    process.exit(1);
   } else {
     res.json(jsonResponse)
   }
@@ -164,6 +165,7 @@ apiApp.get('/relax/api/:source/:id', async function (req, res) {
   const jsonResponse = await processAPIRequest(source, id, undefined, undefined, query)
   if (jsonResponse.success === false && jsonResponse.error) {
     res.status(500).json(jsonResponse)
+    process.exit(1);
   } else {
     res.json(jsonResponse)
   }
