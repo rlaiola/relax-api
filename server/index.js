@@ -141,7 +141,11 @@ apiApp.get('/relax/api/:source/:id/:filename/:index', async function (req, res) 
   const query = req.query.query
 
   const jsonResponse = await processAPIRequest(source, id, filename, index, query)
-  res.json(jsonResponse)
+  if (jsonResponse.success === false && jsonResponse.error) {
+    res.status(500).json(jsonResponse)
+  } else {
+    res.json(jsonResponse)
+  }
 })
 
 // Handling URL path with source and id only
@@ -158,6 +162,11 @@ apiApp.get('/relax/api/:source/:id', async function (req, res) {
   const query = req.query.query
 
   const jsonResponse = await processAPIRequest(source, id, undefined, undefined, query)
+  if (jsonResponse.success === false && jsonResponse.error) {
+    res.status(500).json(jsonResponse)
+  } else {
+    res.json(jsonResponse)
+  }
   res.json(jsonResponse)
 })
 
