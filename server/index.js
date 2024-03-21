@@ -169,7 +169,6 @@ apiApp.get('/relax/api/:source/:id', async function (req, res) {
   } else {
     res.json(jsonResponse)
   }
-  res.json(jsonResponse)
 })
 
 // Handling all other URLs by returning an empty json
