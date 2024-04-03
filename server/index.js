@@ -68,6 +68,10 @@ apiApp.use(limiterAPI)
     },
     concurrency: Cluster.CONCURRENCY_CONTEXT,
     maxConcurrency: 100,
+    // The upper limit of the timeout is 2147483647 which is the max limit
+    // of 32-bit int.
+    // https://github.com/thomasdondorf/puppeteer-cluster/pull/280
+    timeout: 2147483647
   })
 
   await cluster.task(async ({ page, data: [source, id, filename, index, query] }) => {
