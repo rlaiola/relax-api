@@ -54,7 +54,7 @@ const limiterAPI = rateLimit({
 })
 
 relaxApp.use(express.static(path.join(__dirname, '../dist')))
-apiApp.use(limiterRelax)
+relaxApp.use(limiterRelax)
 apiApp.use(bodyParser.json())
 apiApp.use(limiterAPI)
 
@@ -66,8 +66,8 @@ apiApp.use(limiterAPI)
       ],
       headless: 'new'
     },
-    concurrency: Cluster.CONCURRENCY_CONTEXT,
-    maxConcurrency: 100,
+    concurrency: Cluster.CONCURRENCY_PAGE,
+    maxConcurrency: 16,
     // The upper limit of the timeout is 2147483647 which is the max limit
     // of 32-bit int.
     // https://github.com/thomasdondorf/puppeteer-cluster/pull/280
