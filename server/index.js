@@ -64,7 +64,9 @@ apiApp.use(limiterAPI)
       args: [
         '--no-sandbox',
       ],
-      headless: 'new'
+      headless: 'new',
+      // https://stackoverflow.com/questions/57987585/puppeteer-how-to-store-a-session-including-cookies-page-state-local-storage
+      userDataDir: '/tmp/browser'
     },
     concurrency: Cluster.CONCURRENCY_PAGE,
     maxConcurrency: 16,
