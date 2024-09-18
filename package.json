@@ -15,7 +15,7 @@
   "author": "Rodrigo Laiola Guimaraes",
   "license": "GPL-3.0",
   "dependencies": {
-    "express": "^4.19.2",
+    "express": "^4.20.0",
     "express-rate-limit": "^7.2.0",
     "puppeteer": "^22.6.3",
     "puppeteer-cluster": "^0.24.0",
