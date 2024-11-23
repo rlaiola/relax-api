@@ -19,6 +19,6 @@
     "express-rate-limit": "^7.3.1",
     "puppeteer": "^22.11.2",
     "puppeteer-cluster": "^0.24.0",
-    "winston": "^3.13.1"
+    "winston": "^3.16.0"
   }
 }
