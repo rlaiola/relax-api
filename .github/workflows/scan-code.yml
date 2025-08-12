@@ -63,7 +63,7 @@ jobs:
       # https://github.com/actions/checkout
       - 
         name: Checkout repository (no ref input)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         if: ${{ inputs.ref == '' }}
         with:
           # Only a single commit is fetched by default, for the ref/SHA that
@@ -73,7 +73,7 @@ jobs:
 
       - 
         name: Checkout repository (with ref input)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         if: ${{ inputs.ref != '' }}
         with:
           ref: '${{ inputs.ref }}'
