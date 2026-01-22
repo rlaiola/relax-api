@@ -2,69 +2,83 @@
 // options, see the README at:
 // https://github.com/devcontainers/templates/tree/main/src/typescript-node
 {
-	// A name for the dev container displayed in the UI.
-	"name": "dev-relax-api",
+  // A name for the dev container displayed in the UI.
+  "name": "relax-api-devcontainer",
 
-	"image": "mcr.microsoft.com/devcontainers/typescript-node:1-20",
-	// Or use a Dockerfile or Docker Compose file. More info:
-	// https://containers.dev/guide/dockerfile
-	// "build": {
-	//   // Sets the run context to the same level of the .devcontainer folder.
-	//   "context": ".",
-	//   // Update the 'dockerFile' property if you aren't using the standard
-	//   // 'Dockerfile' filename.
-	//   "dockerfile": "Dockerfile"
-	// },
-	// "dockerComposeFile": "docker-compose.yml",
-	// "service": "devcontainer",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:1-20",
+  // Or use a Dockerfile or Docker Compose file. More info:
+  // https://containers.dev/guide/dockerfile
+  // "build": {
+  //   // Sets the run context to the same level of the .devcontainer folder.
+  //   "context": ".",
+  //   // Update the 'dockerFile' property if you aren't using the standard
+  //   // 'Dockerfile' filename.
+  //   "dockerfile": "Dockerfile"
+  // },
+  // "dockerComposeFile": "docker-compose.yml",
+  // "service": "devcontainer",
 
-	// An array of Docker CLI arguments that should be used when running the
-	// container.
-	"runArgs": ["--name=dev-relax", "--rm", "-p", "8080:8080", "-p", "3000:3000", "--network=host"],
+  // An array of Docker CLI arguments that should be used when running the
+  // container.
+  "runArgs": [
+    "--name=relax-api-devcontainer",
+    "--rm",
+    "-p",
+    "8080:8080",
+    "-p",
+    "3000:3000",
+    "--network=host"
+  ],
 
-	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "bash .devcontainer/install_dependencies.sh && export PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium && yarn install && yarn serve",
+  // Use 'postCreateCommand' to run commands after the container is created.
+  "postCreateCommand": "bash .devcontainer/install_dependencies.sh && export PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium && yarn install && yarn serve",
 
-	// Indicates whether devcontainer.json supporting tools should stop the
-	// containers when the related tool window is closed / shut down.
-	"shutdownAction": "stopContainer",
-	// "shutdownAction": "stopCompose",
+  // Indicates whether devcontainer.json supporting tools should stop the
+  // containers when the related tool window is closed / shut down.
+  "shutdownAction": "stopContainer",
+  // "shutdownAction": "stopCompose",
 
-	// Sets the default path that devcontainer.json supporting services / tools
-	// should open when connecting to the container. Defaults to the automatic
-	// source code mount location.
-	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  // Sets the default path that devcontainer.json supporting services / tools
+  // should open when connecting to the container. Defaults to the automatic
+  // source code mount location.
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 
-	// Features to add to the dev container.
-	// More info: https://containers.dev/features.
-	// "features": {},
+  // Cross-orchestrator way to add additional mounts to a container.
+  // "mounts": [
+  //   "source=${localWorkspaceFolder}/data,target=/data,type=bind,consistency=cached"
+  // ],
 
-	// Use 'forwardPorts' to make a list of ports inside the container
-	// available locally.
-	// "forwardPorts": [],
+  // Use 'forwardPorts' to make a list of ports inside the container
+  // available locally.
+  // "forwardPorts": [],
 
-	// Configure tool-specific properties.
-	"customizations": {
-		// Configure properties specific to VS Code.
-		"vscode": {
-			"settings": {},
-			"extensions": [
-				"esbenp.prettier-vscode",
-				"foxundermoon.shell-format",
-				"davidanson.vscode-markdownlint",
-				"fnando.linter",
-				"streetsidesoftware.code-spell-checker"
-			]
-		}
-	},
+  // Configure tool-specific properties.
+  "customizations": {
+    // Configure properties specific to VS Code.
+    "vscode": {
+      "settings": {},
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "foxundermoon.shell-format",
+        "ms-azuretools.vscode-docker",
+        "davidanson.vscode-markdownlint",
+        "fnando.linter",
+        "streetsidesoftware.code-spell-checker",
+        "touchlab.touchlab-vscode-office"
+      ]
+    }
+  },
 
-	// Comment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	"remoteUser": "root",
-	"features": {
-		"ghcr.io/akhildevelops/devcontainer-features/apt:0": {},
-		"ghcr.io/devcontainers/features/git:1": {
-			"ppa": true,
-			"version": "os-provided"
-		}
-	}
+  // Comment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+  "remoteUser": "root",
+
+  // Features to add to the dev container.
+  "features": {
+    "ghcr.io/akhildevelops/devcontainer-features/apt:0": {},
+    "ghcr.io/devcontainers/features/git:1": {
+      "ppa": true,
+      "version": "os-provided"
+    }
+  }
 }
