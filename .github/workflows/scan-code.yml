@@ -55,14 +55,13 @@ jobs:
       matrix:
         language: ['javascript']
         # CodeQL also supports ['cpp','csharp','go','java','python','ruby']
-        # Learn more about CodeQL language support at 
+        # Learn more about CodeQL language support at
         # https://aka.ms/codeql-docs/language-support
 
     steps:
       # Checkout a repository, so the workflow can access it
       # https://github.com/actions/checkout
-      - 
-        name: Checkout repository (no ref input)
+      - name: Checkout repository (no ref input)
         uses: actions/checkout@v6
         if: ${{ inputs.ref == '' }}
         with:
@@ -71,8 +70,7 @@ jobs:
           # for all branches and tags.
           fetch-depth: 0
 
-      - 
-        name: Checkout repository (with ref input)
+      - name: Checkout repository (with ref input)
         uses: actions/checkout@v6
         if: ${{ inputs.ref != '' }}
         with:
@@ -84,8 +82,7 @@ jobs:
 
       # Initialize the CodeQL tools for scanning
       # https://github.com/github/codeql-action
-      - 
-        name: Initialize CodeQL
+      - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
         with:
           languages: ${{ matrix.language }}
@@ -101,8 +98,7 @@ jobs:
       # Autobuild attempts to build any compiled languages  (C/C++, C#, or
       # Java). If this step fails, then you should remove it and run the build
       # manually (see below).
-      - 
-        name: Autobuild
+      - name: Autobuild
         uses: github/codeql-action/autobuild@v4
 
       # ℹ️ Command-line programs to run using the OS shell
@@ -113,11 +109,10 @@ jobs:
       # three lines. Modify them (or add more) to build your code if your
       # project, please refer to the EXAMPLE below for guidance.
 
-      # - 
+      # -
       #   run: |
       #   echo "Run, Build Application using script"
       #   ./location_of_script_within_repo/buildscript.sh
 
-      - 
-        name: Perform CodeQL Analysis
+      - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
