@@ -18,20 +18,21 @@ This implementation provides a workaround to facilitate the integration of [Rela
 This approach returns a Web page that does not include the data. More information regarding this issue can be found [here](https://github.com/dbis-uibk/relax/pull/148).
 
 ## Requirements
-* Install [Git](https://github.com/git-guides/install-git);
-* Install [Yarn](https://yarnpkg.com/);
-* Install [Node](https://nodejs.org/en/).
+
+- Install [Git](https://github.com/git-guides/install-git);
+- Install [Yarn](https://yarnpkg.com/);
+- Install [Node](https://nodejs.org/en/).
 
 ## Quick Start
 
-* Clone this repo and set it as your working directory;
+- Clone this repo and set it as your working directory;
 
   ```sh
   git clone https://github.com/rlaiola/relax-api.git
   cd relax-api
   ```
 
-* Clone RelaX repo* and checkout the static files (branch `gh-pages`);
+- Clone RelaX repo\* and checkout the static files (branch `gh-pages`);
 
   ```sh
   mkdir dist && \
@@ -47,25 +48,25 @@ This approach returns a Web page that does not include the data. More informatio
 
   > **NOTE:** As of Jul 17th 2021, RelaX main repo had not yet accepted the changes necessary for this REST API to work. That's the reason why you should clone the forked project.
 
-* Execute `yarn install` to install all dependencies;
-* Execute `yarn serve` to locally run the Web application on port 8080 and the Query API on port 3000;
+- Execute `yarn install` to install all dependencies;
+- Execute `yarn serve` to locally run the Web application on port 8080 and the Query API on port 3000;
 
   > **NOTE:** This implementation uses ports 8080 (RelaX Web app) and 3000 (RelaX Query API). These ports can me changed by setting the variables RELAX_PORT and RELAX_API_PORT, respectively, as shown below:
 
-    ```sh
-    RELAX_PORT=80 RELAX_API_PORT=4000 yarn serve
-    ```
+  ```sh
+  RELAX_PORT=80 RELAX_API_PORT=4000 yarn serve
+  ```
 
-* Open a Web browser window and visit the URL [http://localhost:8080](http://localhost:8080). In case you started the application to listen in a different port number (`RELAX_PORT` variable), change the URL accordingly. Voilà! RelaX Web application should work properly;
+- Open a Web browser window and visit the URL [http://localhost:8080](http://localhost:8080). In case you started the application to listen in a different port number (`RELAX_PORT` variable), change the URL accordingly. Voilà! RelaX Web application should work properly;
 
   <p align="center">
   <img src="imgs/relax_web_app.png" width=800 />
   </p>
 
-* Run the following command to test RelaX Query API. In case you started the application to listen in a different port number (`RELAX_API_PORT` variable), change the URL accordingly. You should get the query result encoded in JSON format.
+- Run the following command to test RelaX Query API. In case you started the application to listen in a different port number (`RELAX_API_PORT` variable), change the URL accordingly. You should get the query result encoded in JSON format.
 
   ```sh
-  curl http://127.0.0.1:3000/relax/api/local/uibk/local/0?query=UiBqb2luIFMgam9pbiBU
+  curl "http://127.0.0.1:3000/relax/api/local/misc/local/0?query=UiBqb2luIFMgam9pbiBU"
   ```
 
   <p align="center">
@@ -80,9 +81,9 @@ RelaX Web application and API may need to make calls to GitHub API (i.e., to dow
 According to the [documentation](https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting), _"for unauthenticated requests, the rate limit allows for up to 60 requests per hour. Unauthenticated requests are associated with the originating IP address, and not the user making requests."_
 On the other hand, _"for API requests using Basic Authentication ..., you can make up to 5,000 requests per hour."_ Follow the steps below in order to take advantage of a larger request limit:
 
-* Read these [instructions](https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/about-authentication-to-github#authenticating-with-the-api) to create a personal access token to authenticate with GitHub API;
+- Read these [instructions](https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/about-authentication-to-github#authenticating-with-the-api) to create a personal access token to authenticate with GitHub API;
 
-* Then, start the application setting the GITHUB_ACCESS_TOKEN environment variable (replace the word 'my_token' with the actual personal access token generated in the previous step).
+- Then, start the application setting the GITHUB_ACCESS_TOKEN environment variable (replace the word 'my_token' with the actual personal access token generated in the previous step).
 
   ```sh
   GITHUB_ACCESS_TOKEN=my_token yarn serve
@@ -100,15 +101,15 @@ If you would like to help contribute to this project, please see [CONTRIBUTING](
 
 Before submitting a PR consider building and testing a Docker image locally and checking your code with Super-Linter:
 
-  ```sh
-  docker run --rm \
-             -e ACTIONS_RUNNER_DEBUG=true \
-             -e RUN_LOCAL=true \
-             -e DEFAULT_BRANCH=main \
-             --env-file ".github/super-linter.env" \
-             -v "$PWD":/tmp/lint \
-             ghcr.io/super-linter/super-linter:latest
-  ```
+```sh
+docker run --rm \
+           -e ACTIONS_RUNNER_DEBUG=true \
+           -e RUN_LOCAL=true \
+           -e DEFAULT_BRANCH=main \
+           --env-file ".github/super-linter.env" \
+           -v "$PWD":/tmp/lint \
+           ghcr.io/super-linter/super-linter:latest
+```
 
 ## License
 
@@ -121,11 +122,11 @@ the Free Software Foundation, either version 3 of the License, or
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
+along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 This program is released under license GNU GPL v3+ license.
 
