@@ -26,40 +26,44 @@
 const express = require('express')
 const apiApp = express()
 const relaxApp = express()
-// For limiting number of incoming requests
 const rateLimit = require('express-rate-limit')
 const bodyParser = require('body-parser')
 const path = require('path')
 const { Cluster } = require('puppeteer-cluster')
-// const logger = require('./logger')
+
+// Configuration constants
+const RATE_LIMIT_WINDOW_MS = 1 * 60 * 1000 // 1 minute
+const RATE_LIMIT_RELAX_MAX = 50
+const RATE_LIMIT_API_MAX = 100
+const PUPPETEER_TIMEOUT = 30000 // 30 seconds
+const API_PORT = process.env.RELAX_API_PORT || 3000
+const RELAX_PORT = process.env.RELAX_PORT || 8080
 
 // Remove the X-Powered-By header
 apiApp.disable('x-powered-by')
 relaxApp.disable('x-powered-by')
 
-// Creating a limiter by calling rateLimit function with options:
-// max contains the maximum number of request and windowMs
-// contains the time in millisecond so only max amount of
-// request can be made in windowMs time.
+// Creating rate limiters
 const limiterRelax = rateLimit({
-  max: 50,
-  windowMs: 1 * 60 * 1000, // 1 minute
+  max: RATE_LIMIT_RELAX_MAX,
+  windowMs: RATE_LIMIT_WINDOW_MS,
   message: 'Too many requests from this IP'
 })
 
 const limiterAPI = rateLimit({
-  max: 100,
-  windowMs: 1 * 60 * 1000, // 1 minute
+  max: RATE_LIMIT_API_MAX,
+  windowMs: RATE_LIMIT_WINDOW_MS,
   message: 'Too many requests from this IP'
 })
 
 relaxApp.use(express.static(path.join(__dirname, '../dist')))
-relaxApp.use(limiterRelax)
+// relaxApp.use(limiterRelax)
 apiApp.use(bodyParser.json())
-apiApp.use(limiterAPI)
+// apiApp.use(limiterAPI)
 
 ;(async () => {
-  const cluster = await Cluster.launch({
+  try {
+    const cluster = await Cluster.launch({
     puppeteerOptions: {
       args: [
         '--no-sandbox',
@@ -77,8 +81,6 @@ apiApp.use(limiterAPI)
   })
 
   await cluster.task(async ({ page, data: [source, id, filename, index, query] }) => {
-    // console.log("loadResults")
-    // logger.info("loadResults")
     let json = {}
 
     try {
@@ -87,42 +89,26 @@ apiApp.use(limiterAPI)
       // https://docs.github.com/en/rest/guides/getting-started-with-the-rest-api
       if (process.env.GITHUB_ACCESS_TOKEN) {
         await page.setExtraHTTPHeaders({
-          Authorization: 'token ' + process.env.GITHUB_ACCESS_TOKEN
+          Authorization: `token ${process.env.GITHUB_ACCESS_TOKEN}`
         })
       }
 
-      let urlPath = ''
-      if (filename !== undefined && index !== undefined) {
-        urlPath = source + '/' + id + '/' + filename + '/' + index
-      } else urlPath = source + '/' + id
+      let urlPath = filename !== undefined && index !== undefined
+        ? `${source}/${id}/${filename}/${index}`
+        : `${source}/${id}`
 
-      urlPath = urlPath + '?query=' + query
-      // console.log(urlPath)
-      // console.log('http://127.0.0.1:' + relaxPort + '/relax/api/' + urlPath)
-      // logger.info(urlPath)
-      // logger.info('http://127.0.0.1:' + relaxPort + '/relax/api/' + urlPath)
-      await page.goto('http://127.0.0.1:' + relaxPort + '/relax/api/' + urlPath, {
-        // Wait as much as necessary
+      const fullUrl = `http://127.0.0.1:${RELAX_PORT}/relax/api/${urlPath}?query=${encodeURIComponent(query)}`
+      
+      await page.goto(fullUrl, {
         timeout: 0
       })
 
-      // json = await page.evaluate(() => {
-      //   const value1 = document.getElementById('success').firstChild.nodeValue
-      //   const value2 = document.getElementById('query').firstChild.nodeValue
-      //   const value3 = document.getElementById('result').firstChild.nodeValue
-
-      //   return {
-      //     success: value1,
-      //     query: value2,
-      //     result: value3
-      //   }
-      // })
       await page.waitForFunction(() => {
         return document.getElementById('success') &&
                document.getElementById('query') &&
                document.getElementById('result')
       }, {
-        timeout: 30000
+        timeout: PUPPETEER_TIMEOUT
       })
       
       json = await page.evaluate(() => {
@@ -137,88 +123,78 @@ apiApp.use(limiterAPI)
         }
       })
     } catch (err) {
-      console.log(err);
+      console.error('Cluster task error:', err);
       json = {
         success: false,
-        error: err.stack
+        error: err.message
       }
     }
 
-    console.log(json)
     return json
   })
 
   // Handling URL path with filename and index
   apiApp.get('/relax/api/:source/:id/:filename/:index', async function (req, res) {
-    // console.log("Handling URL path with filename and index")
-    // console.log(req.params)
-    // console.log(req.query)
-
-    // logger.info("Handling URL path with filename and index")
-    // logger.info(req.params)
-    // logger.info(req.query)
-
     const { source, id, filename, index } = req.params
-    const query = req.query.query
+    const { query } = req.query
 
-    const jsonResponse = await cluster.execute([source, id, filename, index, query])
-    if (jsonResponse.success === false && jsonResponse.error) {
-      res.status(500).json(jsonResponse)
-      // process.exit(1);
-    } else {
-      res.json(jsonResponse)
+    if (!query) {
+      return res.status(400).json({ error: 'Missing required query parameter' })
+    }
+
+    try {
+      const jsonResponse = await cluster.execute([source, id, filename, index, query])
+      if (jsonResponse.success === false && jsonResponse.error) {
+        res.status(500).json(jsonResponse)
+      } else {
+        res.json(jsonResponse)
+      }
+    } catch (err) {
+      res.status(500).json({ error: 'Internal server error', details: err.message })
     }
   })
 
   // Handling URL path with source and id only
   apiApp.get('/relax/api/:source/:id', async function (req, res) {
-    // console.log("Handling URL path with source and id only")
-    // console.log(req.params)
-    // console.log(req.query)
-
-    // logger.info("Handling URL path with source and id only")
-    // logger.info(req.params)
-    // logger.info(req.query)
-
     const { source, id } = req.params
-    const query = req.query.query
+    const { query } = req.query
 
-    const jsonResponse = await cluster.execute([source, id, undefined, undefined, query])
-    if (jsonResponse.success === false && jsonResponse.error) {
-      res.status(500).json(jsonResponse)
-      // process.exit(1);
-    } else {
-      res.json(jsonResponse)
+    if (!query) {
+      return res.status(400).json({ error: 'Missing required query parameter' })
+    }
+
+    try {
+      const jsonResponse = await cluster.execute([source, id, undefined, undefined, query])
+      if (jsonResponse.success === false && jsonResponse.error) {
+        res.status(500).json(jsonResponse)
+      } else {
+        res.json(jsonResponse)
+      }
+    } catch (err) {
+      res.status(500).json({ error: 'Internal server error', details: err.message })
     }
   })
 
-  // Handling all other URLs by returning an empty json
+  // Handling all other URLs
   apiApp.get('*', (req, res) => {
-    // console.log("Handling all other URLs by returning an empty json")
-    // logger.info("Handling all other URLs by returning an empty json")
-    res.setHeader('Content-Type', 'application/json')
-    res.end(JSON.stringify({ }))
+    res.status(404).json({ error: 'Endpoint not found' })
   })
 
   // Handling RelaX routing in production
   // https://www.pluralsight.com/guides/handling-react-routing-in-production
   relaxApp.get('/*', function (req, res) {
-    // console.log("Handling RelaX routing in production")
-    // logger.info("Handling RelaX routing in production")
     res.sendFile(path.join(__dirname, '../dist/relax', 'index.html'))
   })
 
-  const apiPort = process.env.RELAX_API_PORT || 3000
-  const relaxPort = process.env.RELAX_PORT || 8080
-
-  apiApp.listen(apiPort, () => {
-    console.log('RelaX API listening on port', apiPort)
-    // logger.info('RelaX API listening on port', apiPort)
+  apiApp.listen(API_PORT, () => {
+    console.log(`RelaX API listening on port ${API_PORT}`)
   })
 
-  relaxApp.listen(relaxPort, () => {
-    console.log('RelaX Web application listening on port', relaxPort)
-    // logger.info('RelaX Web application listening on port', relaxPort)
+  relaxApp.listen(RELAX_PORT, () => {
+    console.log(`RelaX Web application listening on port ${RELAX_PORT}`)
   })
-
+  } catch (error) {
+    console.error('Failed to start server:', error)
+    process.exit(1)
+  }
 })()
