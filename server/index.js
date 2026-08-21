@@ -106,11 +106,30 @@ apiApp.use(limiterAPI)
         timeout: 0
       })
 
-      json = await page.evaluate(() => {
-        const value1 = document.getElementById('success').firstChild.nodeValue
-        const value2 = document.getElementById('query').firstChild.nodeValue
-        const value3 = document.getElementById('result').firstChild.nodeValue
+      // json = await page.evaluate(() => {
+      //   const value1 = document.getElementById('success').firstChild.nodeValue
+      //   const value2 = document.getElementById('query').firstChild.nodeValue
+      //   const value3 = document.getElementById('result').firstChild.nodeValue
 
+      //   return {
+      //     success: value1,
+      //     query: value2,
+      //     result: value3
+      //   }
+      // })
+      await page.waitForFunction(() => {
+        return document.getElementById('success') &&
+               document.getElementById('query') &&
+               document.getElementById('result')
+      }, {
+        timeout: 30000
+      })
+      
+      json = await page.evaluate(() => {
+        const value1 = document.getElementById('success').textContent
+        const value2 = document.getElementById('query').textContent
+        const value3 = document.getElementById('result').textContent
+      
         return {
           success: value1,
           query: value2,
@@ -145,7 +164,7 @@ apiApp.use(limiterAPI)
     const jsonResponse = await cluster.execute([source, id, filename, index, query])
     if (jsonResponse.success === false && jsonResponse.error) {
       res.status(500).json(jsonResponse)
-      process.exit(1);
+      // process.exit(1);
     } else {
       res.json(jsonResponse)
     }
@@ -167,7 +186,7 @@ apiApp.use(limiterAPI)
     const jsonResponse = await cluster.execute([source, id, undefined, undefined, query])
     if (jsonResponse.success === false && jsonResponse.error) {
       res.status(500).json(jsonResponse)
-      process.exit(1);
+      // process.exit(1);
     } else {
       res.json(jsonResponse)
     }
